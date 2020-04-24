@@ -1,10 +1,21 @@
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-    <span class="navbar-brand">Manager Dashboard</span>
+<nav class="navbar navbar-inverse bg-dark">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">MindBowser</a>
+    </div>
+    <span class="nav navbar-nav navbar-right logout">
+      <i class="fas fa-sign-out-alt" (click)="logout()">Logout</i>
+    </span>
+    
+  </div>
 </nav>
-<div class="col-sm-3">
-<button type="button" class="btn btn-primary btn-block" (click)="logout()">Logout</button>
-</div>
+
 <div class="container">
+  <div class="col-sm-3" data-toggle="modal" data-target="#addModal" >
+    <a class="btn btn-warning btn-sm">
+        <span class="fa fa-user-o">Add Employee</span> 
+    </a>                      
+  </div>
     <p>Associated Employees</p>            
     <table class="table table-hover">
       <thead>
@@ -49,7 +60,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
               <h4 class="modal-title">Update Employee Info</h4>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <button type="button" class="close" data-dismiss="modal" #closeEditModal>&times;</button>
             </div>            
             <!-- Modal body -->
             <div class="modal-body">
@@ -67,13 +78,55 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" formControlName="email" placeholder="Email">
+                        <input type="text" class="form-control" formControlName="address" placeholder="Address">
+                    </div>
+                    <div class="form-group">
+                      <input formControlName="dob" type="date"  class="form-control" />
+                   
+                   
+                      </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="city" placeholder="City">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" formControlName="mobile" placeholder="Mobile">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block" [disabled]="!empDetail.valid">Update</button>
+                    </div>     
+                </form>
+            </div>                     
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addModal" #myModal>
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">          
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Add Employee</h4>
+              <button type="button" class="close" data-dismiss="modal" #myButton>&times;</button>
+            </div>            
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form [formGroup]="empDetail" (submit)="addEmp()">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" formControlName="firstName" placeholder="First Name">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" formControlName="lastName" placeholder="Last Name">
+                            </div>                            
+                        </div>
                     </div>
                     <div class="form-group">
                         <input type="text" class="form-control" formControlName="address" placeholder="Address">
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" formControlName="dob" placeholder="DOB">
+                        <input type="date" class="form-control" formControlName="dob" placeholder="DOB">
                     </div>
                     <div class="form-group">
                         <input type="text" class="form-control" formControlName="city" placeholder="City">
@@ -82,12 +135,11 @@
                         <input type="text" class="form-control" formControlName="mobile" placeholder="Mobile">
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block" [disabled]="!empDetail.valid">Register</button>
+                        <button type="submit"  class="btn btn-primary btn-block" [disabled]="!empDetail.valid" >Add</button>
                     </div>     
                 </form>
             </div>                     
           </div>
         </div>
       </div>
-    
 </div>
