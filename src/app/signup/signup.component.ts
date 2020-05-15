@@ -23,13 +23,14 @@ export class SignupComponent implements OnInit {
       const manager = {
         firstName: this.fn.nativeElement.value,
         lastName: this.ln.nativeElement.value,
-        email,
+        username: email,
         password: pass,
       };
+      console.log(manager);
       this.httpClient
         .post('http://localhost:8080/signup', manager)
         .subscribe((res: any) => {
-          if (res.Status === true) {
+          if (res.status === true) {
             this.router.navigateByUrl('/login');
           } else {
             alert(res.responseMessage);

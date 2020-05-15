@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ConfirmationDialogService } from '../confirmation-dialog.service';
 
 @Component({
   selector: 'app-home',
@@ -24,11 +25,12 @@ export class HomeComponent implements OnInit {
   dob: FormControl;
   address: FormControl;
   id: FormControl;
-  updatedEmp = {};
+  updatedEmp = {}; 
+  tempId : any;
 
   empList: any = [];
 
-  constructor(private formsBuilder: FormBuilder, private httpClient: HttpClient, private router: Router) { }
+  constructor(private formsBuilder: FormBuilder, private httpClient: HttpClient, private router: Router, private confirmationDialogService: ConfirmationDialogService) { }
 
 
   ngOnInit() {
@@ -73,7 +75,6 @@ export class HomeComponent implements OnInit {
 
   createEmpForm() {
     this.empDetail = this.formsBuilder.group({
-      id: this.id,
       firstName: this.firstName,
       lastName: this.lastName,
       address: this.address,
@@ -84,7 +85,6 @@ export class HomeComponent implements OnInit {
   }
 
   editEmp(emp) {
-    this.httpClient.get(`http://localhost:8080/`);
     const obj = {
       firstName: emp.firstName,
       lastName: emp.lastName,
@@ -94,11 +94,13 @@ export class HomeComponent implements OnInit {
       city: emp.city,
       id: emp.id
     };
+    this.tempId = emp.id;
     this.empDetail.setValue(obj);
   }
   addEmp() {
+    console.log(this.empDetail.value);
     this.myButton.nativeElement.click();
-    this.httpClient.post(`http://localhost:8080/employee/` + localStorage.getItem('username'), this.empDetail.value,
+    this.httpClient.post(`http://localhost:8080/employee/`+ localStorage.getItem('username'), this.empDetail.value,
       {
         headers: new HttpHeaders()
           .append(
@@ -111,8 +113,21 @@ export class HomeComponent implements OnInit {
       });
   }
   updateEmp() {
+
+    this.confirmationDialogService.confirm('Please confirm..', 'Do you really want to update ?')
+    .then((confirmed) => { 
+      console.log('User confirmed:', confirmed);
+    const obj = {
+      firstName: this.empDetail.value.firstName,
+      lastName: this.empDetail.value.lastName,
+      address: this.empDetail.value.address,
+      dob: this.empDetail.value.dob,
+      mobile: this.empDetail.value.mobile,
+      city: this.empDetail.value.city,
+      id: this.tempId
+    };
     this.closeEditModal.nativeElement.click();
-    this.httpClient.post(`http://localhost:8080/employee/update`, this.empDetail.value,
+    this.httpClient.post(`http://localhost:8080/employee/update`,obj,
       {
         headers: new HttpHeaders()
           .append(
@@ -120,11 +135,18 @@ export class HomeComponent implements OnInit {
       }).subscribe((res: any ) => {
         alert(res.responseMessage);
         this.getEmployees(localStorage.getItem('id'));
-      });
+      });})
+    .catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));    console.log(this.empDetail.value);
+
+
   }
 
   deleteEmployee(emp) {
-    const filterList = this.empList.filter(item => {
+
+    this.confirmationDialogService.confirm('Are u sure', 'You want to delete... ?')
+    .then((confirmed) => {
+      if(confirmed){
+             const filterList = this.empList.filter(item => {
       return emp.mobile !== item.mobile;
     });
     console.log(filterList);
@@ -139,6 +161,15 @@ export class HomeComponent implements OnInit {
       alert(res.responseMessage);
       this.getEmployees(localStorage.getItem('id'));
     });
+      }
+ 
+  
+  
+  
+  
+  })
+    .catch(() => console.log('User dismissed the dialog (e.g., by using ESC, clicking the cross icon, or clicking outside the dialog)'));
+    
 }
 
   logout() {
